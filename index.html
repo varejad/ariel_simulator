@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>ARIEL SIMULATOR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  </head>
+  <body>
+    <script>
+      let playerX = 50;
+      let playerY = 250;
+      let poopLevel = 0;
+      let speed = 2;
+      let bathroomX = 700;
+      let gameOver = false;
+      let gameWon = false;
+
+      function setup() {
+        let canvas = createCanvas(800, 400);
+        canvas.parent("game");
+      }
+
+      function draw() {
+        background(220);
+        
+        // Cenário
+        fill(150);
+        rect(0, 300, width, 100); // chão
+        fill(0);
+        textSize(20);
+        text("Banheiro", bathroomX, 270);
+        fill(0, 0, 255);
+        rect(bathroomX, 250, 40, 50); // banheiro
+
+        // Jogador
+        fill(255, 0, 0);
+        rect(playerX, playerY, 30, 50);
+
+        // Barra de "vontade de cagar"
+        fill(0);
+        text("Vontade de cagar:", 10, 20);
+        fill(255, 150, 0);
+        rect(150, 10, poopLevel, 20);
+        stroke(0);
+        noFill();
+        rect(150, 10, 200, 20);
+
+        // Atualizar barra
+        if (!gameOver && !gameWon) {
+          poopLevel += 0.1;
+        }
+
+        // Verifica derrota
+        if (poopLevel >= 200) {
+          gameOver = true;
+        }
+
+        // Verifica vitória
+        if (playerX + 30 >= bathroomX) {
+          gameWon = true;
+        }
+
+        // Mensagens de fim
+        if (gameOver) {
+          fill(255, 0, 0);
+          textSize(32);
+          text("Você se cagou no caminho!", 200, 200);
+          noLoop();
+        }
+
+        if (gameWon) {
+          fill(0, 255, 0);
+          textSize(32);
+          text("Você chegou ao banheiro!", 200, 200);
+          noLoop();
+        }
+      }
+
+      function keyPressed() {
+        if (keyCode === RIGHT_ARROW) {
+          playerX += speed;
+          poopLevel += 1;
+        } else if (keyCode === LEFT_ARROW) {
+          playerX -= speed;
+          poopLevel += 1;
+        } else if (key === ' ') {
+          poopLevel -= 10;
+          if (poopLevel < 0) poopLevel = 0;
+        }
+      }
+    </script>
+
+    <div id="game"></div>
+
+    <div>
+        <div>
+            <button style="font-size: 1.8rem; display: block;" onclick="playerX -= speed; poopLevel += 1;">⬅️</button>
+            <button style="font-size: 1.8rem; display: block;" onclick="playerX += speed; poopLevel += 1;">➡️</button>
+            <button style="font-size: 1.8rem; display: block;" onclick="poopLevel < 0 ? poopLevel = 0 : poopLevel -= 10">🚽</button>
+        </div>
+    </div>
+  </body>
+</html>
