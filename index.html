@@ -18,6 +18,12 @@
       let leftPressed = false;
       let rightPressed = false;
 
+      let playerImg;
+
+    function preload() {
+        playerImg = loadImage("ariel.png");
+    }
+
 
       function setup() {
         let canvas = createCanvas(800, 300);
@@ -37,8 +43,8 @@
         rect(bathroomX, 150, 40, 50); // banheiro
 
         // Jogador
-        fill(255, 0, 0);
-        rect(playerX, playerY, 30, 50);
+        image(playerImg, playerX, playerY, 60, 60); // redimensiona o sprite para 50x50
+
 
         // Barra de "vontade de cagar"
         fill(0);
@@ -51,7 +57,7 @@
 
         // Atualizar barra
         if (!gameOver && !gameWon) {
-          poopLevel += 0.3;
+          poopLevel += 0.4;
         }
 
         // Verifica derrota
