@@ -17,11 +17,25 @@
       let gameWon = false;
       let leftPressed = false;
       let rightPressed = false;
+      let upPressed = false;
+
+      let isJumping = false;
+      let velocityY = 0;
+      let gravity = 0.8;
+      let jumpForce = -12;
+      let groundY = 150; // Y da parte superior do chão
 
       let playerImg;
+      let unclePaul;
+      let unclePaulX = 400;
+      let unclePaulY = 150;
+      let unclePaulSpeed = 1.5;
+      let showMuleque = false;
+      let mulequeTimer = 0;
 
     function preload() {
         playerImg = loadImage("ariel.png");
+        unclePaul = loadImage("unclePaul.jpeg");
     }
 
 
@@ -44,7 +58,9 @@
 
         // Jogador
         image(playerImg, playerX, playerY, 60, 60); // redimensiona o sprite para 50x50
-
+        
+        //unclePaul
+        image(unclePaul, unclePaulX, unclePaulY, 60, 160); // redimensiona o sprite para 50x50
 
         // Barra de "vontade de cagar"
         fill(0);
@@ -83,16 +99,96 @@
           text("Você chegou ao banheiro!", 200, 200);
           noLoop();
         }
+        // if (!gameOver && !gameWon) {
+        //     if (leftPressed) {
+        //         playerX -= speed;
+        //         poopLevel += 0.5;
+        //     }
+        //     if (rightPressed) {
+        //         playerX += speed;
+        //         poopLevel += 0.5;
+        //     }
+        // }
+        let nextX
         if (!gameOver && !gameWon) {
-            if (leftPressed) {
-                playerX -= speed;
-                poopLevel += 0.5;
-            }
-            if (rightPressed) {
-                playerX += speed;
-                poopLevel += 0.5;
-            }
+          nextX = playerX;
+          if (leftPressed) {
+            nextX -= speed;
+            poopLevel += 0.5;
+          }
+          if (rightPressed) {
+            nextX += speed;
+            poopLevel += 0.5;
+          }
+          if (upPressed && !isJumping) {
+            velocityY = jumpForce;
+            isJumping = true;
+          }
+
+          velocityY += gravity;
+          playerY += velocityY;
+
+          // Verifica se está no chão
+          if (playerY >= groundY) {
+            playerY = groundY;
+            velocityY = 0;
+            isJumping = false;
+          }
         }
+
+        // Colisão com Uncle Paul
+        let isColliding = collideRectRect(
+        nextX, playerY, 60, 60,
+        unclePaulX, unclePaulY, 60, 160
+        );
+
+        if (isColliding) {
+        let playerBottom = playerY + 60;
+        let uncleTop = unclePaulY;
+
+        // Caso o jogador esteja caindo em cima do Uncle Paul
+        if (velocityY >= 0 && playerBottom > uncleTop && playerY < uncleTop) {
+          playerY = uncleTop - 60;
+          velocityY = 0;
+          isJumping = false;
+        } else {
+          // Impede movimento lateral se bater de lado
+          if (playerX < unclePaulX && unclePaulSpeed < 0) {
+            playerX = unclePaulX - 60;
+          } else if (playerX > unclePaulX && unclePaulSpeed > 0) {
+            playerX = unclePaulX + 60;
+          }
+          showMuleque = true;
+          mulequeTimer = millis();
+        }
+        } else {
+         playerX = nextX;
+        }
+
+
+        // Movimento do Uncle Paul
+        unclePaulX += unclePaulSpeed;
+        if (unclePaulX > width - 60 || unclePaulX < 0) {
+          unclePaulSpeed *= -1;
+        }
+
+        if (showMuleque && millis() - mulequeTimer < 2000) {
+          fill(0);
+          textSize(20);
+          text("Você é muleque", playerX - 20, playerY - 10);
+        } else {
+          showMuleque = false;
+        }
+
+      }
+
+      function collideRectRect(x1, y1, w1, h1, x2, y2, w2, h2) {
+        return (
+          x1 < x2 + w2 &&
+          x1 + w1 > x2 &&
+          y1 < y2 + h2 &&
+          y1 + h1 > y2
+        );
       }
 
     </script>
@@ -100,9 +196,10 @@
         <div>
             <div id="game"></div>
             <div style="display: flex; gap: 3rem;">
-                <button style="font-size: 1.8rem;" ontouchstart="leftPressed = true" ontouchend="leftPressed = false">⬅️</button>
-                <button style="font-size: 1.8rem;" ontouchstart="rightPressed = true" ontouchend="rightPressed = false">➡️</button>
-                <button style="font-size: 1.8rem; display: block;" onclick="poopLevel < 0 ? poopLevel = 0 : poopLevel -= 10">🚽</button>
+                <button style="font-size: 1.8rem;" ontouchstart="leftPressed = true" ontouchend="leftPressed = false" >⬅️</button>
+                <button style="font-size: 1.8rem;" ontouchstart="upPressed = true" ontouchend="upPressed = false" onclick="upPressed = true">⬆️</button>
+                <button style="font-size: 1.8rem;" ontouchstart="rightPressed = true" ontouchend="rightPressed = false" onclick="rightPressed = true">➡️</button>
+                <button style="font-size: 1.8rem; display: block;" onclick="poopLevel < 10 ? poopLevel += 0 : poopLevel -= 10">😖</button>
             </div>
         </div>
 
