@@ -35,7 +35,7 @@
 
     function preload() {
         playerImg = loadImage("ariel.png");
-        unclePaul = loadImage("unclePaul.jpeg");
+        unclePaul = loadImage("unclePaul.png");
     }
 
 
@@ -60,7 +60,7 @@
         image(playerImg, playerX, playerY, 60, 60); // redimensiona o sprite para 50x50
         
         //unclePaul
-        image(unclePaul, unclePaulX, unclePaulY, 60, 160); // redimensiona o sprite para 50x50
+        image(unclePaul, unclePaulX, unclePaulY, 60, 70); // redimensiona o sprite para 50x50
 
         // Barra de "vontade de cagar"
         fill(0);
@@ -158,9 +158,10 @@
           } else if (playerX > unclePaulX && unclePaulSpeed > 0) {
             playerX = unclePaulX + 60;
           }
-          showMuleque = true;
-          mulequeTimer = millis();
         }
+        showMuleque = true;
+        mulequeTimer = millis();
+        
         } else {
          playerX = nextX;
         }
@@ -175,7 +176,7 @@
         if (showMuleque && millis() - mulequeTimer < 2000) {
           fill(0);
           textSize(20);
-          text("Você é muleque", playerX - 20, playerY - 10);
+          text("Você é muleque", unclePaulX - 20, unclePaulY - 10);
         } else {
           showMuleque = false;
         }
